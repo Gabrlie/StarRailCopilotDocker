@@ -19,11 +19,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY StarRailCopilot/requirements.txt .
 
 # 安装 Python 依赖
-# 使用 --prefer-binary 优先使用预编译包,避免编译问题
-# 如果某些包(如 PyAV)编译失败,可以在运行时通过 python3-opencv 提供的功能替代
+# 优先尝试安装所有依赖,如果失败则跳过 PyAV 相关包
 RUN pip install --no-cache-dir --user --prefer-binary -r requirements.txt || \
-    (echo "Some packages failed to install, trying without problematic packages..." && \
-    pip install --no-cache-dir --user --prefer-binary $(grep -v "^av" requirements.txt | grep -v "^#" | grep -v "^$"))
+    (echo "Some packages failed to install, trying without av package..." && \
+    grep -v "^av" requirements.txt | grep -v "^#" | grep -v "^$" > /tmp/requirements_filtered.txt && \
+    pip install --no-cache-dir --user --prefer-binary -r /tmp/requirements_filtered.txt)
 
 # ============================================
 # 阶段 2: 运行阶段
