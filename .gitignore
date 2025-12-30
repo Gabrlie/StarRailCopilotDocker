@@ -1,9 +1,6 @@
 # 上游仓库(在构建时动态克隆)
 StarRailCopilot/
 
-# 构建记录
-.last_build_commit
-
 # 本地配置和数据
 config/
 logs/
