@@ -4,7 +4,7 @@
 # ============================================
 # 阶段 1: 构建阶段
 # ============================================
-FROM python:3.10-slim AS builder
+FROM python:3.10-slim-bullseye AS builder
 
 # 设置工作目录
 WORKDIR /build
@@ -35,7 +35,7 @@ RUN echo "Cython<3" > /tmp/constraint.txt && \
 # ============================================
 # 阶段 2: 运行阶段
 # ============================================
-FROM python:3.10-slim
+FROM python:3.10-slim-bullseye
 
 # 构建参数
 ARG COMMIT_HASH=unknown
