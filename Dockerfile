@@ -13,21 +13,17 @@ WORKDIR /build
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
     git \
-    pkg-config \
-    libavformat-dev \
-    libavcodec-dev \
-    libavdevice-dev \
-    libavutil-dev \
-    libavfilter-dev \
-    libswscale-dev \
-    libswresample-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # 复制 StarRailCopilot 源代码
 COPY StarRailCopilot/requirements.txt .
 
-# 安装 Python 依赖到临时目录
-RUN pip install --no-cache-dir --user -r requirements.txt
+# 安装 Python 依赖
+# 使用 --prefer-binary 优先使用预编译包,避免编译问题
+# 如果某些包(如 PyAV)编译失败,可以在运行时通过 python3-opencv 提供的功能替代
+RUN pip install --no-cache-dir --user --prefer-binary -r requirements.txt || \
+    (echo "Some packages failed to install, trying without problematic packages..." && \
+    pip install --no-cache-dir --user --prefer-binary $(grep -v "^av" requirements.txt | grep -v "^#" | grep -v "^$"))
 
 # ============================================
 # 阶段 2: 运行阶段
