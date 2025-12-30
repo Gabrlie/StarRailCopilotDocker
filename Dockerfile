@@ -11,8 +11,8 @@ WORKDIR /build
 
 # 安装构建依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3-dev \
     git \
-    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # 复制 StarRailCopilot 源代码
@@ -38,26 +38,12 @@ ENV PYTHONUNBUFFERED=1 \
     TZ=Asia/Shanghai
 
 # 安装运行时依赖
+# 安装运行时依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    # 基础工具
     git \
-    wget \
-    curl \
-    ca-certificates \
-    # ADB 和 Android 工具
     adb \
-    android-tools-adb \
-    # 图像处理库
-    libgl1 \
-    libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
-    libgomp1 \
-    # 字体支持
-    fonts-wqy-microhei \
-    fonts-wqy-zenhei \
-    # 清理
+    python3-opencv \
+    curl \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
