@@ -9,14 +9,10 @@ services:
     ports:
       - "22367:22367"
 
-    # 卷挂载: 持久化配置和日志
+    # 卷挂载: 持久化配置
     volumes:
       # 配置文件目录
       - ./config:/app/config
-      # 日志目录
-      - ./logs:/app/logs
-      # 截图目录
-      - ./screenshots:/app/screenshots
 
     # 环境变量
     environment:

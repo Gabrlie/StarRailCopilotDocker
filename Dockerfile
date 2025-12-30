@@ -64,10 +64,12 @@ WORKDIR /app
 # 复制 StarRailCopilot 源代码
 COPY StarRailCopilot/ .
 
-# 复制配置模板
-RUN if [ -f config/deploy.template-cn.yaml ]; then \
-    cp config/deploy.template-cn.yaml config/deploy.yaml; \
-    fi
+# 复制本项目适配的 Linux 配置模板到 /app 根目录 (避免被 volume 映射覆盖)
+COPY config/deploy.template-linux.yaml /app/deploy.template-linux.yaml
+
+# 复制入口脚本
+COPY scripts/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # 创建必要的目录
 RUN mkdir -p logs screenshots config
@@ -81,7 +83,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:22367/ || exit 1
 
 # 设置入口点
-ENTRYPOINT ["python", "gui.py", "--run", "src"]
+ENTRYPOINT ["/entrypoint.sh"]
 
 # 默认命令参数
-CMD []
+CMD ["python", "gui.py", "--run", "src"]

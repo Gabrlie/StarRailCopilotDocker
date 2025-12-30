@@ -64,13 +64,30 @@ docker run -d \
 
 ### 配置文件
 
-首次运行时,容器会自动从 `config/deploy.template-cn.yaml` 创建默认配置。
+**首次启动时**，容器会自动检查 `config/deploy.yaml` 是否存在：
+- ✅ 如果不存在，会自动从 `config/deploy.template-linux.yaml` 模板创建
+- ✅ 如果已存在，则使用现有配置
 
-你可以根据需要修改 `config/deploy.yaml`:
+这样即使你映射了一个空的 `config` 目录，也不用担心配置文件丢失。
+
+**修改配置**：
+
+首次启动后，你可以直接修改宿主机上的 `config/deploy.yaml` 文件：
+
+```bash
+# 编辑配置文件
+vim ./config/deploy.yaml
+
+# 重启容器使配置生效
+docker-compose restart
+```
+
+**主要配置项**：
 
 - **模拟器配置**: 设置模拟器类型和连接方式
 - **游戏服务器**: 选择国服/国际服
 - **任务设置**: 配置每日任务、体力清理等
+- **WebUI 密码**: 默认为 `EnterYourPasswordHere`，建议修改
 
 详细配置说明请参考: [StarRailCopilot Wiki](https://github.com/LmeSzinc/StarRailCopilot/wiki)
 
