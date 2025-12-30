@@ -1,0 +1,164 @@
+Deploy:
+  Git:
+    # URL of StarRailCopilot repository
+    # [CN user] Use 'cn' to get update from git-over-cdn service
+    # [Other] Use 'global' to get update from https://github.com/LmeSzinc/StarRailCopilot
+    Repository: global
+    # Branch of StarRailCopilot
+    # [Developer] Use 'dev', 'app', etc, to try new features
+    # [Other] Use 'master', the stable branch
+    Branch: master
+    # Filepath of git executable
+    # [Docker/Linux] Use 'git' (system git)
+    GitExecutable: git
+    # Set git proxy
+    # [CN user] Use your local http proxy (http://127.0.0.1:{port}) or socks5 proxy (socks5://127.0.0.1:{port})
+    # [Other] Use null
+    GitProxy: null
+    # Set SSL Verify
+    # [In most cases] Use true
+    # [Other] Use false when connected to an untrusted network
+    SSLVerify: true
+    # Update StarRailCopilot at startup
+    # [Docker] Use false (image already contains the code)
+    # [Other] Use true
+    AutoUpdate: false
+    # Whether to keep local changes during update
+    # User settings, logs and screenshots will be kept, no matter this is true or false
+    # [Docker] Use false
+    # [Developer] Use true, if you modified the code
+    KeepLocalChanges: false
+
+  Python:
+    # Filepath of python executable
+    # [Docker/Linux] Use 'python' or 'python3' (system python)
+    PythonExecutable: python
+    # URL of pypi mirror
+    # [CN user] Use 'https://pypi.tuna.tsinghua.edu.cn/simple' for faster and more stable download
+    # [Other] Use null
+    PypiMirror: null
+    # Install dependencies at startup
+    # [Docker] Use false (dependencies already installed in image)
+    # [Other] Use true
+    InstallDependencies: false
+    # Path to requirements.txt
+    # [In most cases] Use 'requirements.txt'
+    RequirementsFile: requirements.txt
+
+  Adb:
+    # Filepath of ADB executable
+    # [Docker/Linux] Use 'adb' (system adb)
+    AdbExecutable: adb
+    # Whether to replace ADB
+    # [Docker/Linux] Use false (not applicable in containerized environment)
+    ReplaceAdb: false
+    # Brute-force connect to all available emulator instances
+    # [Docker] Use false (connect manually via adb connect)
+    # [Other] Use true
+    AutoConnect: false
+    # Re-install uiautomator2
+    # [In most cases] Use true
+    InstallUiautomator2: true
+
+  Ocr:
+    # Run Ocr as a service, can reduce memory usage by not import mxnet everytime you start an alas instance
+
+    # Whether to use ocr server
+    # [Default] false
+    UseOcrServer: false
+    # Whether to start ocr server when start GUI
+    # [Default] false
+    StartOcrServer: false
+    # Port of ocr server runs by GUI
+    # [Default] 22268
+    OcrServerPort: 22268
+    # Address of ocr server for alas instance to connect
+    # [Default] 127.0.0.1:22268
+    OcrClientAddress: 127.0.0.1:22268
+
+  Update:
+    # Use auto update and builtin updater feature
+    # [Docker] Use false (updates handled by rebuilding image)
+    EnableReload: false
+    # Check update every X minute
+    # [Docker] Disable by setting to 0
+    # [Default] 5
+    CheckUpdateInterval: 0
+    # Scheduled restart time
+    # If there are updates, StarRailCopilot will automatically restart and update at this time every day
+    # and run all instances that running before restarted
+    # [Docker] Disable by setting to null
+    # [Default] 03:50
+    AutoRestartTime: null
+
+  Misc:
+    # Enable discord rich presence
+    DiscordRichPresence: false
+
+  RemoteAccess:
+    # Enable remote access (using ssh reverse tunnel serve by https://github.com/wang0618/localshare)
+    # ! You need to set Password below to enable remote access since everyone can access to your alas if they have your url.
+    # [Docker] Use false (access via exposed port)
+    EnableRemoteAccess: false
+    # Username when login into ssh server
+    # [Default] null (will generate a random one when startup)
+    SSHUser: null
+    # Server to connect
+    # [Default] null
+    # [Format] host:port
+    SSHServer: null
+    # Filepath of SSH executable
+    # [Docker/Linux] Use 'ssh' (system ssh)
+    SSHExecutable: ssh
+
+  Webui:
+    # --host. Host to listen
+    # [Docker] Use '0.0.0.0' to allow external access
+    # [Use IPv6] '::'
+    WebuiHost: 0.0.0.0
+    # --port. Port to listen
+    # You will be able to access webui via `http://{host}:{port}`
+    # [In most cases] Default to 22367
+    WebuiPort: 22367
+    # Language to use on web ui
+    # 'zh-CN' for Chinese simplified
+    # 'en-US' for English
+    # 'ja-JP' for Japanese
+    # 'zh-TW' for Chinese traditional
+    # 'es-ES' for Spanish
+    Language: zh-CN
+    # Theme of web ui
+    # 'default' for light theme
+    # 'dark' for dark theme
+    Theme: default
+    # Follow system DPI scaling
+    # [Docker/Linux] Use false (not applicable in containerized environment)
+    DpiScaling: false
+    # --key. Password of web ui
+    # Useful when expose StarRailCopilot to the public network
+    Password: EnterYourPasswordHere
+    # --cdn. Use jsdelivr cdn for pywebio static files (css, js).
+    # 'true' for jsdelivr cdn
+    # 'false' for self host cdn (automatically)
+    # 'https://path.to.your/cdn' to use custom cdn
+    CDN: false
+    # --run. Auto-run specified config when startup
+    # 'null' default no specified config
+    # '["alas"]' specified "alas" config
+    # '["alas","alas2"]' specified "alas" "alas2" configs
+    Run: null
+    # SSL support
+    # Only effective when both parameters below are set
+    # --ssl-key. Path to SSL key file
+    # [Default] null (no SSL)
+    WebuiSSLKey: null
+    # --ssl-cert. Path to SSL cert file
+    # [Default] null (no SSL)
+    WebuiSSLCert: null
+    # To update app.asar
+    # [Docker] Use false (not applicable)
+    AppAsarUpdate: false
+    # --no-sandbox. https://github.com/electron/electron/issues/30966
+    # Some Windows systems cannot call the GPU normally for virtualization, and you need to manually turn off sandbox mode
+    # [Docker/Linux] Use false (not applicable)
+    NoSandbox: false

@@ -2,7 +2,8 @@
 StarRailCopilot/
 
 # 本地配置和数据
-config/
+config/*
+!config/deploy.template-linux.yaml
 logs/
 screenshots/
 
