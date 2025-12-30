@@ -1,6 +1,7 @@
 # StarRailCopilot Docker 自动化构建
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/gabrlie/starrailcopilot)](https://hub.docker.com/r/gabrlie/starrailcopilot)
+[![Docker Image Size](https://img.shields.io/docker/image-size/gabrlie/starrailcopilot/latest)](https://hub.docker.com/r/gabrlie/starrailcopilot)
 
 > 自动化构建 [StarRailCopilot](https://github.com/LmeSzinc/StarRailCopilot) 的 Docker 镜像,每天自动检查更新并推送到 Docker Hub。
 
