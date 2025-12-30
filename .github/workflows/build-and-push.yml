@@ -107,7 +107,7 @@ jobs:
           echo "${{ steps.check_update.outputs.upstream_commit }}" > .last_build_commit
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .last_build_commit
+          git add -f .last_build_commit
           git commit -m "chore: update build record to ${{ steps.check_update.outputs.upstream_short }}"
           git push
       
