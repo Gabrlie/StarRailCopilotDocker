@@ -4,7 +4,7 @@
 # ============================================
 # 阶段 1: 构建阶段
 # ============================================
-FROM python:3.11-slim AS builder
+FROM python:3.10-slim AS builder
 
 # 设置工作目录
 WORKDIR /build
@@ -28,12 +28,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY StarRailCopilot/requirements.txt .
 
 # 安装 Python 依赖
-RUN pip install --no-cache-dir --user --prefer-binary -r requirements.txt
+# 使用 PIP_CONSTRAINT 限制构建隔离环境中的 Cython 版本，解决 PyAV 编译错误
+RUN echo "Cython<3" > /tmp/constraint.txt && \
+    PIP_CONSTRAINT=/tmp/constraint.txt pip install --no-cache-dir --user --prefer-binary -r requirements.txt
 
 # ============================================
 # 阶段 2: 运行阶段
 # ============================================
-FROM python:3.11-slim
+FROM python:3.10-slim
 
 # 构建参数
 ARG COMMIT_HASH=unknown
