@@ -20,6 +20,9 @@ env:
   UPSTREAM_REPO: LmeSzinc/StarRailCopilot
   IMAGE_NAME: starrailcopilot
 
+permissions:
+  contents: write  # 允许提交和推送 .last_build_commit 文件
+
 jobs:
   check-and-build:
     runs-on: ubuntu-latest

@@ -48,7 +48,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     adb \
     android-tools-adb \
     # 图像处理库
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
@@ -85,11 +85,12 @@ RUN mkdir -p logs screenshots config
 EXPOSE 22367
 
 # 健康检查
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+# 注意: WebUI 需要较长时间启动,因此设置了 60 秒的启动等待期
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:22367/ || exit 1
 
 # 设置入口点
-ENTRYPOINT ["python", "gui.py"]
+ENTRYPOINT ["python", "gui.py", "--run", "src"]
 
 # 默认命令参数
 CMD []

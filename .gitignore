@@ -1,1 +1,28 @@
+# 上游仓库(在构建时动态克隆)
 StarRailCopilot/
+
+# 构建记录
+.last_build_commit
+
+# 本地配置和数据
+config/
+logs/
+screenshots/
+
+# IDE 配置
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
