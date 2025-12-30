@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  starrailcopilot:
+    # 使用预构建的镜像
+    image: gabrlie/starrailcopilot:latest
+
+    container_name: starrailcopilot
+
+    # 端口映射: WebUI 访问端口
+    ports:
+      - "22367:22367"
+
+    # 卷挂载: 持久化配置和日志
+    volumes:
+      # 配置文件目录
+      - ./config:/app/config
+      # 日志目录
+      - ./logs:/app/logs
+      # 截图目录
+      - ./screenshots:/app/screenshots
+
+    # 环境变量
+    environment:
+      # 时区设置
+      - TZ=Asia/Shanghai
+
+    # 重启策略
+    restart: unless-stopped

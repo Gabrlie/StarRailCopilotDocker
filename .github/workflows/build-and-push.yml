@@ -1,0 +1,120 @@
+name: Build and Push StarRailCopilot Docker Image
+
+on:
+  # 定时触发: 每天北京时间凌晨 2:00 (UTC 18:00)
+  schedule:
+    - cron: '0 18 * * *'
+  
+  # 手动触发
+  workflow_dispatch:
+  
+  # Push 到 main 分支时触发
+  push:
+    branches:
+      - main
+    paths:
+      - 'Dockerfile'
+      - '.github/workflows/build-and-push.yml'
+
+env:
+  UPSTREAM_REPO: LmeSzinc/StarRailCopilot
+  IMAGE_NAME: starrailcopilot
+
+jobs:
+  check-and-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout 本仓库
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: 检查上游仓库更新
+        id: check_update
+        run: |
+          # 获取上游最新 commit hash
+          UPSTREAM_COMMIT=$(git ls-remote https://github.com/${{ env.UPSTREAM_REPO }}.git HEAD | cut -f1)
+          echo "upstream_commit=$UPSTREAM_COMMIT" >> $GITHUB_OUTPUT
+          echo "upstream_short=${UPSTREAM_COMMIT:0:7}" >> $GITHUB_OUTPUT
+          
+          # 检查本地记录
+          if [ -f .last_build_commit ]; then
+            LAST_COMMIT=$(cat .last_build_commit)
+            echo "last_commit=$LAST_COMMIT" >> $GITHUB_OUTPUT
+            
+            if [ "$UPSTREAM_COMMIT" = "$LAST_COMMIT" ] && [ "${{ github.event_name }}" = "schedule" ]; then
+              echo "has_update=false" >> $GITHUB_OUTPUT
+              echo "✅ 无更新,跳过构建"
+            else
+              echo "has_update=true" >> $GITHUB_OUTPUT
+              echo "🔄 发现更新或手动触发,开始构建"
+            fi
+          else
+            echo "has_update=true" >> $GITHUB_OUTPUT
+            echo "🆕 首次构建"
+          fi
+      
+      - name: 克隆上游仓库
+        if: steps.check_update.outputs.has_update == 'true'
+        run: |
+          git clone --depth 1 https://github.com/${{ env.UPSTREAM_REPO }}.git StarRailCopilot
+          echo "✅ 克隆完成"
+      
+      - name: 设置 Docker Buildx
+        if: steps.check_update.outputs.has_update == 'true'
+        uses: docker/setup-buildx-action@v3
+      
+      - name: 登录 Docker Hub
+        if: steps.check_update.outputs.has_update == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: 提取元数据
+        if: steps.check_update.outputs.has_update == 'true'
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=raw,value=${{ steps.check_update.outputs.upstream_short }}
+            type=raw,value={{date 'YYYYMMDD'}}
+      
+      - name: 构建并推送 Docker 镜像
+        if: steps.check_update.outputs.has_update == 'true'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            COMMIT_HASH=${{ steps.check_update.outputs.upstream_commit }}
+      
+      - name: 更新构建记录
+        if: steps.check_update.outputs.has_update == 'true'
+        run: |
+          echo "${{ steps.check_update.outputs.upstream_commit }}" > .last_build_commit
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .last_build_commit
+          git commit -m "chore: update build record to ${{ steps.check_update.outputs.upstream_short }}"
+          git push
+      
+      - name: 输出构建信息
+        if: steps.check_update.outputs.has_update == 'true'
+        run: |
+          echo "### 🎉 构建成功!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **上游 Commit**: \`${{ steps.check_update.outputs.upstream_commit }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **镜像标签**: " >> $GITHUB_STEP_SUMMARY
+          echo "  - \`${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "  - \`${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.check_update.outputs.upstream_short }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "  - \`${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:$(date +%Y%m%d)\`" >> $GITHUB_STEP_SUMMARY
