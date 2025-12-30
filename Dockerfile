@@ -14,17 +14,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
     git \
     gcc \
+    pkg-config \
+    libavformat-dev \
+    libavcodec-dev \
+    libavdevice-dev \
+    libavutil-dev \
+    libswscale-dev \
+    libswresample-dev \
+    libavfilter-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # 复制 StarRailCopilot 源代码
 COPY StarRailCopilot/requirements.txt .
 
 # 安装 Python 依赖
-# 优先尝试安装所有依赖,如果失败则跳过 PyAV 相关包
-RUN pip install --no-cache-dir --user --prefer-binary -r requirements.txt || \
-    (echo "Some packages failed to install, trying without av package..." && \
-    grep -v "^av" requirements.txt | grep -v "^#" | grep -v "^$" > /tmp/requirements_filtered.txt && \
-    pip install --no-cache-dir --user --prefer-binary -r /tmp/requirements_filtered.txt)
+RUN pip install --no-cache-dir --user --prefer-binary -r requirements.txt
 
 # ============================================
 # 阶段 2: 运行阶段
@@ -42,7 +46,6 @@ ENV PYTHONUNBUFFERED=1 \
     DEBIAN_FRONTEND=noninteractive \
     TZ=Asia/Shanghai
 
-# 安装运行时依赖
 # 安装运行时依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
