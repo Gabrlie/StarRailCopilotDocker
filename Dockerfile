@@ -13,6 +13,7 @@ WORKDIR /build
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
     git \
+    gcc \
     && rm -rf /var/lib/apt/lists/*
 
 # 复制 StarRailCopilot 源代码
