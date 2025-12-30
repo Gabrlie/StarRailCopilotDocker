@@ -29,6 +29,7 @@ COPY StarRailCopilot/requirements.txt .
 
 # 安装 Python 依赖
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir "Cython<3" && \
     pip install --no-cache-dir --user --prefer-binary -r requirements.txt
 
 # ============================================
