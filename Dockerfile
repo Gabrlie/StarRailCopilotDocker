@@ -4,7 +4,7 @@
 # ============================================
 # 阶段 1: 构建阶段
 # ============================================
-FROM python:3.9-slim as builder
+FROM python:3.9-slim AS builder
 
 # 设置工作目录
 WORKDIR /build
@@ -75,7 +75,7 @@ COPY StarRailCopilot/ .
 
 # 复制配置模板
 RUN if [ -f config/deploy.template-cn.yaml ]; then \
-        cp config/deploy.template-cn.yaml config/deploy.yaml; \
+    cp config/deploy.template-cn.yaml config/deploy.yaml; \
     fi
 
 # 创建必要的目录

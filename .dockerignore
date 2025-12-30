@@ -1,2 +1,10 @@
-StarRailCopilot/
+# 排除上游仓库的 git 历史
+StarRailCopilot/.git
+StarRailCopilot/.github
+
+# 排除构建记录文件
 .last_build_commit
+
+# 排除本仓库的 git 和 github 配置
+.git
+.github
