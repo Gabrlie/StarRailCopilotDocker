@@ -4,7 +4,7 @@
 # ============================================
 # 阶段 1: 构建阶段
 # ============================================
-FROM python:3.9-slim AS builder
+FROM python:3.10-slim AS builder
 
 # 设置工作目录
 WORKDIR /build
@@ -28,7 +28,7 @@ RUN pip install --no-cache-dir --user --prefer-binary -r requirements.txt || \
 # ============================================
 # 阶段 2: 运行阶段
 # ============================================
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 # 构建参数
 ARG COMMIT_HASH=unknown
